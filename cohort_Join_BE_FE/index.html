@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" placeholder="Principal Amount" id="input1"> <br><br>
+    <input type="text" placeholder="Rate Of Interest" id="input2"><br><br>
+    <input type="text" placeholder="Time in Years" id="input3"><br><br>
+    <button onclick="sum()">Calculate Sum</button>
+    <br><br>
+    <div id="ans"></div>
+    <script>
+        
+        async function sum(){
+            let a = document.getElementById("input1").value;
+            let b = document.getElementById("input2").value;
+            let c = document.getElementById("input3").value;
+            let str = "http://localhost:3000/sum?"
+            str+="a="+a+"&b="+b+"&c="+c;
+            const data = await fetch(str); 
+            const finaldata = await data.json();
+            // console.log(finaldata.final);
+            let completeans = "Final Amount is "+finaldata.final+" and the interest gained is "+finaldata.profit;
+            document.getElementById("ans").innerText = completeans;
+
+        }
+    </script>
+</body>
+</html> 

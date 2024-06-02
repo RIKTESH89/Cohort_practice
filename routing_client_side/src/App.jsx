@@ -46,3 +46,4 @@ export default App
 // create two components , 1- landing, 2- Dashbord page
 // window.location.href is used to mark the location - not a good way, it fetches everytime
 // correct way for above problem - useNavigate() hook in a component which is inside in BrowserRouter
+// React.lazy to run the above website such that the entire bundle is not recieved in a single go

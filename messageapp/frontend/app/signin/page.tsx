@@ -19,8 +19,8 @@ export default function Signin(){
 
         newSocket.onmessage = (message) => {
           const parsedata = JSON.parse(message.data);
-          const {senddata} = parsedata;
-          setTitle(senddata);
+          const {senddata,msg} = parsedata;
+          setTitle(msg);
           console.log(parsedata)
         }
         setSocket(newSocket);

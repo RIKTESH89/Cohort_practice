@@ -18,21 +18,27 @@ wss.on('connection', function connection(ws) {
             storeclients.set(parsedData.id, ws);
             if (storeclients.get(parsedData.id) && storeclients.get(parsedData.id).readyState === ws_1.WebSocket.OPEN) {
                 console.log("accessed the websocket");
-                (_a = storeclients.get(parsedData.id)) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ senddata: parsedData.id }));
+                (_a = storeclients.get(parsedData.id)) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ senddata: parsedData.id, msg: "Yayy! your connection is successful" }));
             }
             console.log("stored");
         }
         else if (parsedData.type == "message") {
             console.log("not stored");
-            if (parsedData.recieverId && parsedData.recieverId.readyState === ws_1.WebSocket.OPEN) {
-                (_b = storeclients.get(parsedData.recieverId)) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify({ message: parsedData.message }));
+            if (storeclients.get(parsedData.rid)) {
+                console.log(parsedData);
+            }
+            if (storeclients.get(parsedData.rid) && storeclients.get(parsedData.rid).readyState === ws_1.WebSocket.OPEN) {
+                console.log("back to reciever");
+                // console.log(storeclients)
+                (_b = storeclients.get(parsedData.rid)) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify({ sendmessage: parsedData.text }));
             }
         }
         // wss.clients.forEach(function each(client) {
         //   if (client.readyState === WebSocket.OPEN) {
-        //     client.send(data, { binary: isBinary });
+        //     client.send(JSON.stringify({sendmessage : parsedData.text}));
         //   }
         // });
+        // console.log(wss.clients.size);
     });
     ws.send(JSON.stringify({ message: 'Received your data!' }));
 });

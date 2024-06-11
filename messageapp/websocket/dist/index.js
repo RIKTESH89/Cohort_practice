@@ -33,12 +33,6 @@ wss.on('connection', function connection(ws) {
                 (_b = storeclients.get(parsedData.rid)) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify({ sendmessage: parsedData.text }));
             }
         }
-        // wss.clients.forEach(function each(client) {
-        //   if (client.readyState === WebSocket.OPEN) {
-        //     client.send(JSON.stringify({sendmessage : parsedData.text}));
-        //   }
-        // });
-        // console.log(wss.clients.size);
     });
     ws.send(JSON.stringify({ message: 'Received your data!' }));
 });

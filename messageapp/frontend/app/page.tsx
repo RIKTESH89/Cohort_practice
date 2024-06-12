@@ -1,29 +1,20 @@
-"use client"
-import { useEffect, useState } from 'react'
+import { Appbar } from "@/components/Appbar";
+import { NEXT_AUTH_CONFIG } from "@/lib/auth";
+import { getServerSession } from "next-auth"
+import { signIn } from "next-auth/react";
 
-export default function() {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [title,setTitle] = useState("here");
+async function getUser() {
+  const session = await getServerSession(NEXT_AUTH_CONFIG);
+  return session;
+}
 
-  useEffect(() => {
-    const newSocket = new WebSocket('ws://localhost:8080');
-    newSocket.onopen = () => {
-      console.log('Connection established');
-      newSocket.send(JSON.stringify({msg : 'Hello Server!'}));
-    }
-    newSocket.onmessage = (message) => {
-      setTitle(JSON.parse(message.data).id);
-    }
-    setSocket(newSocket);
-    return () => newSocket.close();
-  }, [])
+export default async function Home() {
+  const session = await getUser();
 
   return (
     <div>
-      <div className='text-3xl bg-gray-200'>{title}</div>
-      <br />
-      <br />
-      <button onClick={function(){socket?.send(JSON.stringify({id : Math.random()}));}} className='ml-5 p-4 text-3xl bg-gray-200'>click</button>
+      <Appbar />
+      {JSON.stringify(session)}
     </div>
-  )
+  );
 }

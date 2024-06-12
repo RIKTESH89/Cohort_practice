@@ -1,47 +1,46 @@
 "use client"
-
-import { signup } from "@/app/actions/user"
-import { useState,useEffect } from "react"
-
-export default function Signin(){
-
-    const [username,setUsername] = useState("")
-    const [title,setTitle] = useState("")
-    const [password,setPassword] = useState("")
-    const [socket, setSocket] = useState<WebSocket | null>(null);
-
-    useEffect(() => {
-        const newSocket = new WebSocket('ws://localhost:8080');
-        newSocket.onopen = () => {
-          console.log('Connection established');
-          newSocket.send(JSON.stringify({message :"Connection established"}));
-        }
-
-        newSocket.onmessage = (message) => {
-          const parsedata = JSON.parse(message.data);
-          const {senddata,msg} = parsedata;
-          setTitle(msg);
-          console.log(parsedata)
-        }
-        setSocket(newSocket);
-        return () => newSocket.close();
-      }, [])
-
-    return(
-        <div className="flex flex-col items-center justify-center h-screen">
+import { Heading } from '@/components/Heading';
+import { InputComponentLikeFirstName } from '@/components/InputComponentLikeFirstName';
+import { SignButton } from '@/components/SignButton';
+import { SubHeading } from '@/components/SubHeading';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import {BottomWarning} from '@/components/BottomWarning'
+export default function() {
+    const router = useRouter();
+    const [username,setUsername] = useState("");
+    const [password,setPassword] = useState("");
+    return (
+      <div className='text-center'>
+        <div className="bg-white h-screen flex justify-center">
             <div className="flex flex-col justify-center">
-                <div className="bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <h1 className="text-3xl">{title}</h1>
-            <input onChange={function(e){setUsername(e.target.value)}} type="text" placeholder="username" className="p-4"/>
-            <br />
-            <br />
-            <input onChange={function(e){setPassword(e.target.value)}} type="text" placeholder="password"  className="p-4"/>
-            <button onClick={async () => {
-                const response = await signup(username, password);
-                socket?.send(JSON.stringify({type:"signup",id : response}));
-            }} type="button" className="mt-8 w-full text-white bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2">Sign in</button>
-           {/* <div className="p-3 bg-gray-200 text">{title}</div> */}
-           </div> </div>
-            </div>
+                <div className="bg-gray-100 rounded-lg text-center mx-4 mb-16">
+                <Heading>Sign in</Heading>
+                <SubHeading>Enter your Credentials to access your account</SubHeading>
+                <InputComponentLikeFirstName name={'Username'} placeholder={'Username'} onChange={function(e){setUsername(e.target.value)}}/>
+                <InputComponentLikeFirstName name={'Password'} placeholder={'Password' }onChange={function(e){setPassword(e.target.value)}}/>
+                <SignButton onClick={async () => {
+                  await signIn("github", { callbackUrl: "/chatting" });
+                }}>Login with Github</SignButton>
+                <SignButton onClick={async () => {
+                      const res = await signIn("credentials", {
+                        username : username,
+                        password : password,
+                        redirect: false,
+                    });
+                    if(res && !res.error){
+                      console.log(res);
+                    router.push("/chatting")
+                    }
+                    else{
+                      router.push("/signup")
+                    }
+                  }}>Login with email</SignButton>
+                  <BottomWarning Warning={"Don't have an account?"}></BottomWarning>
+              </div>
+        </div>
+      </div>
+      </div>
     )
 }

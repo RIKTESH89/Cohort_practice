@@ -21,7 +21,7 @@ import { senderIdAtom } from "@/store/Atoms"
         // Fetch data using session if needed
       }
       fetchData();
-      setSender(session.data.user)
+      setSender(session.data.user.id)
     },)
     return () => clearTimeout(getData)
     }, [filter]); 

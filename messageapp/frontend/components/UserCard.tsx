@@ -1,6 +1,10 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
+import { useRecoilValue,useRecoilState } from 'recoil';
+import { senderIdAtom,currentChatState } from '@/store/Atoms';
+import { useEffect } from 'react';
+
 interface User {
     username: string;
     email: string;
@@ -11,8 +15,12 @@ interface Props {
     value: User;
 }
 
+
 export function UserCard({ value }: Props){
     const router = useRouter();
+    const sender = useRecoilValue(senderIdAtom)
+    const [chatstate,setchatState] = useRecoilState(currentChatState)
+
     return(
         <div className="flex justify-between border p-6 my-2 bg-gray-200 hover:bg-gray-400">
             <div className="flex pt-5 md:pt-2.5">
@@ -22,7 +30,13 @@ export function UserCard({ value }: Props){
                 <div className="text-xl">{value.username}</div>
             </div>
             
-            <button onClick={function(){router.push("/startChat?"+"recieverId="+value.id);
+            <button onClick={function(){
+                setchatState((prevChat:any) => ({
+                    ...prevChat,
+                    [sender]: value.id,
+                  }));
+                console.log(chatstate);
+                router.push("/startChat?"+"recieverId="+value.id);
             }} className="rounded-md font-medium text-center text-white w-1/4 sm:w-1/6 py-3 mx-3 mb-1.5 bg-gray-700 hover:bg-gray-900 active:bg-gray-600 focus:outline-none focus:ring focus:ring-gray-300">Chat</button>
         </div>
     )

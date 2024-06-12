@@ -6,8 +6,9 @@ import { useSession } from "next-auth/react";
 import { getPrevMsg } from "@/app/actions/user"
 import { UserCard } from "@/components/UserCard"
 import chat from '../chat/page';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue,useRecoilState } from 'recoil';
 import { senderIdAtom } from '@/store/Atoms';
+import { currentChatState } from '@/store/Atoms';
 import { Chat } from 'openai/resources/index.mjs';
 
 
@@ -20,11 +21,12 @@ export default function startChat(){
     const searchParams = useSearchParams();
     const recieverId = searchParams.get('recieverId')
     const sender = useRecoilValue(senderIdAtom)
+    const [chatState, setChatState] = useRecoilState(currentChatState);
     const [chatHistory,setchatHistory] = useState([])
     useEffect(function(){
         // setsender(session.data.user);
         async function fetchchat(){
-            const chats = await getPrevMsg(sender.id,recieverId);
+            const chats = await getPrevMsg(sender,recieverId);
             setchatHistory(chats);
         }
         fetchchat();
@@ -33,7 +35,7 @@ export default function startChat(){
     useEffect(() => {
         const newSocket = new WebSocket('ws://localhost:8080');
         newSocket.onopen = () => {
-            newSocket.send(JSON.stringify({type:"signup",id : parseInt(sender.id)}));
+            newSocket.send(JSON.stringify({type:"signup",id : parseInt(sender)}));
         }
 
         newSocket.onmessage = (message) => {
@@ -48,10 +50,14 @@ export default function startChat(){
           
         }
         setSocket(newSocket);
-        return () => newSocket.close();
+        return function(){
+            const newChatState = { ...chatState };
+            delete newChatState[sender];
+            setChatState(newChatState);
+            newSocket.close();};
       }, [])
     
-    // console.log(chatHistory);
+    // console.log(chatState[sender]==85);
 
     return (
         <div>
@@ -68,7 +74,9 @@ export default function startChat(){
             </div>            
             {/* <button className="p-2 bg-gray-300 border rounded w-64">{incommingmsg}</button> */}
             <input className="mt-10 p-3 bg-gray-300" onChange={function(e){setselfmsg(e.target.value)}} type="text" placeholder="message"/>
-            <button className="p-2 bg-gray-300 border rounded" onClick={function(){socket?.send(JSON.stringify({type:"message",sid : parseInt(sender.id),rid:parseInt(recieverId),text:seflmsg}));
+            <button className="p-2 bg-gray-300 border rounded" onClick={function(){
+                socket?.send(JSON.stringify({type:"message",sid : parseInt(sender.id),rid:parseInt(recieverId),text:seflmsg}));
+                
                 setchathistory((prevHistory) => [...prevHistory, seflmsg]); 
             }}>send_message</button>
             {/* <div>This is sender: {session.data.user.id}</div> */}

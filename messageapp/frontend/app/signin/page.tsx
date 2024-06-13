@@ -30,7 +30,6 @@ export default function() {
                         redirect: false,
                     });
                     if(res && !res.error){
-                      console.log(res);
                     router.push("/chatting")
                     }
                     else{

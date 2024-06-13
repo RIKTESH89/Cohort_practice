@@ -17,16 +17,40 @@ export async function signup(username:string, password:string,email:string) {
     return user.id
 }
 
-export async function getUsersByFilter(filter:string) {
-    const users = await prisma.user.findMany({
-      where: {
-        username: {
-          startsWith: filter
-        }
+export async function msgCreate( senderId:string, recieverId:string, text:string) {
+  // should add zod validation here
+  const msgId = await prisma.message.create({
+      data: {
+          senderId: senderId,
+          recieverId: recieverId,
+          body: text
       }
-    });
-    return users;
-  }
+  });
+
+
+  return msgId
+}
+
+export async function getUsersByFilter(filter: string, username: string) {
+  const users = await prisma.user.findMany({
+    where: {
+      AND: [
+        {
+          username: {
+            startsWith: filter,
+          },
+        },
+        {
+          username: {
+            not: username,
+          },
+        },
+      ],
+    },
+  });
+  return users;
+}
+
 
   export async function getPrevMsg(sid:string,rid:string){
     const messages = await prisma.message.findMany({
@@ -54,3 +78,5 @@ export async function getUsersByFilter(filter:string) {
     
     return messages;
   }
+
+  

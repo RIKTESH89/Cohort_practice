@@ -9,16 +9,18 @@ import axios from 'axios'
 import { useState } from "react";
 import { signup } from "@/app/actions/user"
 import { useRouter } from 'next/navigation';
+import { NavBar } from "@/components/Navbar";
 
 export default function Signup(){
  const [ username, setUserName ] = useState("");
  const [ email, setemail ] = useState("");
  const [ password,setPassword ] = useState("");
  const router = useRouter();
-//  const navigate = useNavigate();
 
     return (
         <div>
+                    <NavBar special={"signup"}></NavBar>
+
             <div className="bg-white h-screen flex justify-around">
             <div className="flex flex-col justify-around">
                 <div className="bg-gray-100 rounded-lg text-center mx-4 mb-16">
@@ -31,8 +33,8 @@ export default function Signup(){
                         const response = await signup(username, password,email);
                         // alert("Signup Succesful")
                         router.push("/signin")
-                    }}>Sign in</SignButton>
-                    <BottomWarning Warning={"Don't have an account?"}></BottomWarning>
+                    }}>Sign up</SignButton>
+                    <BottomWarning Warning={"Already have an account?"} page={"signin"}></BottomWarning>
                 </div>
             </div>
         </div>

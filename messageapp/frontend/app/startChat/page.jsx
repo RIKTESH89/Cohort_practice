@@ -24,6 +24,7 @@ export default function startChat(){
     const [chatState, setChatState] = useRecoilState(currentChatState);
     const [chatHistory,setchatHistory] = useState([])
     const bottomRef = useRef(null);
+    const [loader,setloader]=useState(true);
 
     useEffect(() => {
         if (status === "authenticated" && session?.user?.id) {
@@ -38,6 +39,7 @@ export default function startChat(){
         const fetchChats = async () => {
             const chats = await getPrevMsg(sender, searchParams.get('recieverId'));
             console.log(chats);
+            setloader(false);
             setchatHistory(chats);
         };
         fetchChats();
@@ -95,7 +97,7 @@ export default function startChat(){
             <svg class="absolute w-12 h-12 text-gray-400 -left-1 relative w-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">{searchParams.get('user')}</span>
         </div>
-        <div class="flex flex-row items-center justify-end  dark:text-white">
+        <div class="flex flex-row items-center justify-end  dark:text-white mr-4">
             <button onClick={function(){router.push("/chatting")}}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
@@ -106,6 +108,7 @@ export default function startChat(){
         </nav>
 
         </div>
+        {loader ? <div className="text-center text-3xl">loading....</div> : null}
         <div >
         {chatHistory.map(function(value){
             return (

@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/chatting/page.jsx", "app/actions/user.ts", "app/startChat/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/chatting/page.jsx", "app/actions/user.ts", "app/startChat/page.jsx", "components/BottomWarning.jsx"],
   "exclude": ["node_modules"]
 }

@@ -79,4 +79,11 @@ export async function getUsersByFilter(filter: string, username: string) {
     return messages;
   }
 
-  
+  export async function delAccount(username:string) {
+    const user = await prisma.user.delete({
+      where: {
+        username: username
+      }
+    })
+    return user;
+  }
